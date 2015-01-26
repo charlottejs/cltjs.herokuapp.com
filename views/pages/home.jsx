@@ -40,12 +40,16 @@ var Home = React.createClass({
   },
 
   getInitialState() {
+    var s = {};
+    if (typeof localStorage !== 'undefined' && localStorage.getItem('2015-votes')) {
+      s = JSON.parse(localStorage.getItem('2015-votes'));
+    }
     return {
       depth: 2,
       rounded: false,
-      'name': '',
-      'topic[]': ['clojurescript'],
-      'other': '',
+      'name': s.name || '',
+      'topic[]': s.topic || ['clojurescript'],
+      'other': s.other || '',
       // extract from rehydration
       message: this.props.message,
       errors: [],
@@ -77,15 +81,18 @@ var Home = React.createClass({
     var node = e.target;
     var {action, method} = node;
     this.setState({errors: []});
+    var body = JSON.stringify({
+      name: this.state.name,
+      topic: this.state['topic[]'],
+      other: this.state.other,
+      // new FormData(node),
+    });
+
+    localStorage.setItem('2015-votes', body);
 
     fetch(action, {
       method: method,
-      body: JSON.stringify({
-        name: this.state.name,
-        topic: this.state['topic[]'],
-        other: this.state.other,
-        // new FormData(node),
-      }),
+      body: body,
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
