@@ -108,7 +108,7 @@ var Home = React.createClass({
       <form action="/2015-topics" method="POST" onSubmit={this.onSubmit}>
         {this.state.errors.length > 0 && (
           <ul className={css.errorBlock.className}>
-            {this.state.errors.map(e => <div className={css.error.className}>{e}</div>)}
+            {this.state.errors.map(e => <div key={e} className={css.error.className}>{e}</div>)}
           </ul>
         )}
         <Floater name="name" onChange={this.onChange}>Full name</Floater>
