@@ -5,7 +5,9 @@ var path = require('path');
 var extend = require('./lib/extend');
 var readdir = require('fs').readdirSync;
 var accepts = require('./lib/accepts');
-var Votes = require('./api').Votes;
+var api = require('./api');
+var Votes = api.Votes;
+var Meetup = api.Meetup;
 
 var db = function(r) { return r.server.plugins['hapi-mongodb']; };
 
@@ -70,18 +72,22 @@ module.exports = function(server) {
     },
 
     handler: function(request, reply) {
-      Votes.save(db(request), request.payload);
-      // TODO: persist payload
+      Meetup.validateName(request.payload.name, function(err, isValid) {
+        Votes.save(db(request), request.payload);
 
-      var response = {message: 'Thank you for your picks, ' + request.payload.name + '!'};
-      if (accepts(request, 'application/json')) {
-        reply(response).code(200);
-      }
-      else {
-        console.log('reply with view');
-        reply.view('pages/home', response)
-          .header('Content-Type', 'text/html;charset=UTF-8');
-      }
+        var response = isValid ?
+          {message: 'Thank you for your picks, ' + request.payload.name + '!'} :
+          {errors: ['You must be a part of the CharlotteJS meetup group.']};
+
+        if (accepts(request, 'application/json')) {
+          reply(response).code(response.errors ? 401 : 200);
+        }
+        else {
+          console.log('reply with view');
+          reply.view('pages/home', response)
+            .header('Content-Type', 'text/html;charset=UTF-8');
+        }
+      });
     }
   });
 

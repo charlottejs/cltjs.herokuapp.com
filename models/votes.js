@@ -1,6 +1,5 @@
 var invoke = function(fn) {
   if (typeof fn !== 'function') return;
-  console.log(Array.prototype.slice.call(arguments, 1));
   fn.apply(null, Array.prototype.slice.call(arguments, 1));
 }
 

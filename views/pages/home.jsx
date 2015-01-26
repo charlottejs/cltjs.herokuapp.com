@@ -8,7 +8,8 @@ var Floater = require('../components/floater/index.jsx');
 var Checkbox = require('../components/checkbox/index.jsx');
 
 var status = (resp) => (
-  ((resp.statusCode >= 200 && resp.statusCode < 300) || typeof resp.statusCode === 'undefined') ?
+  ((resp.statusCode >= 200 && resp.statusCode < 300) ||
+    (typeof resp.statusCode === 'undefined' && typeof resp.errors === 'undefined')) ?
     Promise.resolve(resp) :
     Promise.reject(resp)
 );
@@ -94,10 +95,7 @@ var Home = React.createClass({
       name: this.state.name,
       topic: this.state['topic[]'],
       other: this.state.other,
-      // new FormData(node),
     });
-
-    localStorage.setItem('2015-votes', body);
 
     fetch(action, {
       method: method,
@@ -109,8 +107,13 @@ var Home = React.createClass({
     })
     .then(toJSON)
     .then(status)
-    .then(json => this.setState({message: json.message}))
-    .catch(err => this.setState({errors: err.message.split('. ').filter(ignoreError)}));
+    .then(json => (
+      localStorage.setItem('2015-votes', body),
+      this.setState({message: json.message})
+    ))
+    .catch(err => (
+      this.setState({errors: err.errors || err.message.split('. ').filter(ignoreError)})
+    ));
   },
 
   renderForm() {
