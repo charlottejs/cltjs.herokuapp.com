@@ -23,13 +23,13 @@ var Layout = React.createClass({
           <link rel="icon" href="/favicon.ico" />
           <link rel="shortcut icon" href="/favicon.ico" />
           <link rel="stylesheet" href="/public/css/all.css" />
+          <script async dangerouslySetInnerHTML={{__html: 'var __rehydration = ' + JSON.stringify(this.props.rehydration) + ';'}}></script>
+          {/*process.env.NODE_ENV === 'production' ? <script src="/public/js/common.js"></script> : null*/}
+          <script async src={`/public/js/${this.props.module}.js`}></script>
         </head>
         <body>
           {this.props.children}
-          <script dangerouslySetInnerHTML={{__html: 'var __rehydration = ' + JSON.stringify(this.props.rehydration) + ';'}}></script>
-          {process.env.NODE_ENV === 'production' ? <script src="/public/js/common.js"></script> : null}
-          <script src={`/public/js/${this.props.module}.js`}></script>
-          <script dangerouslySetInnerHTML={{__html: "(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create', 'UA-xxxxxxxx-x', 'auto');ga('send', 'pageview');"}}></script>
+          <script dangerouslySetInnerHTML={{__html: "(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create', 'UA-58998805-1', 'auto');ga('send', 'pageview');"}}></script>
         </body>
       </html>
     );
