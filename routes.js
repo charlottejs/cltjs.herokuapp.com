@@ -5,6 +5,9 @@ var path = require('path');
 var extend = require('./lib/extend');
 var readdir = require('fs').readdirSync;
 var accepts = require('./lib/accepts');
+var Votes = require('./api').Votes;
+
+var db = function(r) { return r.server.plugins['hapi-mongodb']; };
 
 module.exports = function(server) {
   server.route({
@@ -32,6 +35,17 @@ module.exports = function(server) {
   });
 
   server.route({
+    method: 'GET',
+    path: '/2015-topics',
+    handler: function(request, reply) {
+      Votes.totals(db(request), function(response) {
+        reply(response).code(200);
+      });
+    }
+  });
+
+
+  server.route({
     method: 'POST',
     path:'/2015-topics',
     config: {
@@ -47,7 +61,7 @@ module.exports = function(server) {
     },
 
     handler: function(request, reply) {
-      console.log(request.payload);
+      Votes.save(db(request), request.payload);
       // TODO: persist payload
 
       var response = {message: 'Thank you for your picks, ' + request.payload.name + '!'};

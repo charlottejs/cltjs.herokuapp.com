@@ -5,7 +5,7 @@ var getLabelSelector = v => v ? 'label__hasContent' : 'label';
 
 var Floater = React.createClass({
   propTypes: {
-    onChange: React.PropTypes.func,
+    onChange: React.PropTypes.func.isRequired,
     name: React.PropTypes.string.isRequired,
     children: React.PropTypes.string.isRequired,
     id: React.PropTypes.string,
@@ -27,9 +27,7 @@ var Floater = React.createClass({
     var labelClass = getLabelSelector(value);
     this.setState({value, labelClass});
 
-    if (typeof this.props.onChange === 'function') {
-      this.props.onChange(e);
-    }
+    this.props.onChange(e);
   },
 
   componentDidMount() {
@@ -39,6 +37,10 @@ var Floater = React.createClass({
       this.setState({
         value: domValue,
         labelSelector: getLabelSelector(domValue)
+      });
+      this.props.onChange({
+        target: this.refs.input.getDOMNode(),
+        value: domValue
       });
     }
   },

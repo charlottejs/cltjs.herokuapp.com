@@ -120,7 +120,7 @@ var Home = React.createClass({
             </Checkbox>
           ))}
           <Checkbox checked={this.state['topic[]'].indexOf('other') > -1} name="topic[]" onChange={this.onChange} value="other">
-            <Floater name="other" value={this.state['other']}>Other...</Floater>
+            <Floater onChange={this.onChange} name="other" value={this.state['other']}>Other...</Floater>
           </Checkbox>
         </fieldset>
         <Button>submit</Button>
