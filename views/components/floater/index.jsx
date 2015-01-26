@@ -4,6 +4,13 @@ var css = require('./styles');
 var getLabelSelector = v => v ? 'label__hasContent' : 'label';
 
 var Floater = React.createClass({
+  propTypes: {
+    onChange: React.PropTypes.func,
+    name: React.PropTypes.string.isRequired,
+    children: React.PropTypes.string.isRequired,
+    id: React.PropTypes.string,
+  },
+
   getInitialState() {
     return {
       value: this.props.initialValue,
@@ -37,23 +44,26 @@ var Floater = React.createClass({
   },
 
   render() {
-    var {label, id, ...rest} = this.props;
-    if (typeof id === 'undefined' && typeof label === 'string') id = label.replace(/\s+/, '-');
+    var {children, id, name, ...rest} = this.props;
+    if (typeof id === 'undefined') {
+      if (typeof name === 'string') id = name.replace(/\s+/, '-');
+      else id = children.replace(/\s+/, '-').toLowerCase();
+    }
     var {value} = this.state;
 
     return (
       <div className={css.fieldset.className}>
         <label
           className={css[getLabelSelector(value)].className}
-          htmlFor={id}>{label}</label>
+          htmlFor={id}>{children}</label>
         <this.props.input
           ref="input"
           {...rest}
           onChange={this.handleChange}
           className={css.textfield.className}
-          name={id}
+          name={name}
           id={id}
-          placeholder={label}
+          placeholder={children}
           value={value} />
       </div>
     );

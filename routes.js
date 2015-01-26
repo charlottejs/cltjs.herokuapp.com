@@ -4,6 +4,7 @@ var Joi = require('joi');
 var path = require('path');
 var extend = require('./lib/extend');
 var readdir = require('fs').readdirSync;
+var accepts = require('./lib/accepts');
 
 module.exports = function(server) {
   server.route({
@@ -28,6 +29,37 @@ module.exports = function(server) {
         */
       }
     });
+  });
+
+  server.route({
+    method: 'POST',
+    path:'/2015-topics',
+    config: {
+      validate: {
+        options: {abortEarly: false},
+        payload: {
+          'name': Joi.string().min(3).max(55).label('Full Name'),
+          'topic': Joi.array().label('Topics'),
+          'other': Joi.string().min(3).max(55).label('Other topic').optional().allow(''),
+          // 'g-recaptcha-response': Joi.string().allow(''),
+        }
+      }
+    },
+
+    handler: function(request, reply) {
+      console.log(request.payload);
+      // TODO: persist payload
+
+      var response = {message: 'Thank you for your picks, ' + request.payload.name + '!'};
+      if (accepts(request, 'application/json')) {
+        reply(response).code(200);
+      }
+      else {
+        console.log('reply with view');
+        reply.view('pages/home', response)
+          .header('Content-Type', 'text/html;charset=UTF-8');
+      }
+    }
   });
 
   readdir('views/pages').forEach(function(page) {

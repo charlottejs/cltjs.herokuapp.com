@@ -4,28 +4,26 @@ var floaterStyles = require('./components/floater/styles');
 var COLOR = '#0069c4';
 
 extendStyle(floaterStyles, 'textfield', {
-  borderBottomColor: 'blue',
+  borderBottomColor: COLOR,
 });
 
-var button = {
-  background: 'transparent',
-  border: '2px solid ' + COLOR,
-  borderRadius: '0.5em',
-  color: COLOR,
-  fontSize: '1.333em',
-  marginTop: '1.333em',
-  padding: '0.5em 1.5em',
-  transition: 'all 0.3s ease-in',
-  ':hover': {
-    background: COLOR,
-    color: '#fff',
-  },
-  ':focus': {
-    background: COLOR,
-    color: '#fff',
-  },
+var fieldset = {
+  border: 0,
+  padding: 0,
+};
+
+var errorBlock = {
+  background: 'red',
+  border: '1px solid red',
+};
+
+var error = {
+  color: '#fff',
+  padding: '0.333em 0.666em',
 };
 
 module.exports = {
-  button: RCSS.registerClass(button),
+  fieldset: RCSS.registerClass(fieldset),
+  errorBlock: RCSS.registerClass(errorBlock),
+  error: RCSS.registerClass(error),
 };

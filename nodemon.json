@@ -1,6 +1,6 @@
 {
   "verbose": true,
-  "watch": "*.js",
+  "ext": "js jsx",
   "ignore": [
     ".git",
     "_old/*",

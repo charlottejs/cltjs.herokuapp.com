@@ -1,5 +1,8 @@
 var React = require('react');
 
+require('es6-promise').polyfill();
+require('isomorphic-fetch');
+
 var Layout = React.createClass({
 
   getDefaultProps() {

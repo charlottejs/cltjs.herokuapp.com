@@ -1,10 +1,31 @@
 var React = require('react');
 var BaseLayout = require('./../layouts/base.jsx');
 var css = require('../styles');
+var Button = require('../components/button/index.jsx');
 var Header = require('../components/header/index.jsx');
 var Paper = require('../components/paper/index.jsx');
 var Floater = require('../components/floater/index.jsx');
 var Checkbox = require('../components/checkbox/index.jsx');
+
+var status = (resp) => (
+  ((resp.statusCode >= 200 && resp.statusCode < 300) || typeof resp.statusCode === 'undefined') ?
+    Promise.resolve(resp) :
+    Promise.reject(resp)
+);
+var toJSON = resp => resp.json();
+var ignoreError = e => e.match(/allowed to be empty/);
+
+var TOPICS = {
+  clojurescript: 'ClojureScript',
+  modules: 'Module Systems. AMD, CJS, ES6',
+  offline: 'Offline Series',
+  antiangular: 'Anti-angular',
+  react: 'React',
+  ember: 'Ember',
+  animations: 'JavaScript Animations',
+  drawing: 'Drawing in JS',
+  games: 'Game Development',
+};
 
 var Home = React.createClass({
   getDefaultProps() {
@@ -22,7 +43,12 @@ var Home = React.createClass({
     return {
       depth: 2,
       rounded: false,
+      'name': '',
       'topic[]': ['clojurescript'],
+      'other': '',
+      // extract from rehydration
+      message: this.props.message,
+      errors: [],
     };
   },
 
@@ -46,35 +72,70 @@ var Home = React.createClass({
     this.setState(o);
   },
 
+  onSubmit(e) {
+    e.preventDefault();
+    var node = e.target;
+    var {action, method} = node;
+    this.setState({errors: []});
+
+    fetch(action, {
+      method: method,
+      body: JSON.stringify({
+        name: this.state.name,
+        topic: this.state['topic[]'],
+        other: this.state.other,
+        // new FormData(node),
+      }),
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+    })
+    .then(toJSON)
+    .then(status)
+    .then(json => this.setState({message: json.message}))
+    .catch(err => this.setState({errors: err.message.split('. ').filter(ignoreError)}));
+  },
+
+  renderForm() {
+    if (this.state.message) {
+      return (
+        <div>{this.state.message}</div>
+      );
+    }
+
+    return (
+      <form action="/2015-topics" method="POST" onSubmit={this.onSubmit}>
+        {this.state.errors.length > 0 && (
+          <ul className={css.errorBlock.className}>
+            {this.state.errors.map(e => <div className={css.error.className}>{e}</div>)}
+          </ul>
+        )}
+        <Floater name="name" onChange={this.onChange}>Full name</Floater>
+        <fieldset className={css.fieldset.className}>
+          <p>Please select the topics you are most interested in.</p>
+          {Object.keys(TOPICS).map(k => (
+            <Checkbox key={k} checked={this.state['topic[]'].indexOf(k) > -1} name="topic[]" onChange={this.onChange} value={k}>
+              {TOPICS[k]}
+            </Checkbox>
+          ))}
+          <Checkbox checked={this.state['topic[]'].indexOf('other') > -1} name="topic[]" onChange={this.onChange} value="other">
+            <Floater name="other" value={this.state['other']}>Other...</Floater>
+          </Checkbox>
+        </fieldset>
+        <Button>submit</Button>
+      </form>
+    );
+  },
+
   render() {
     var {depth, rounded} = this.state;
-    var topics = {
-      clojurescript: 'ClojureScript',
-      modules: 'Module Systems. AMD, CJS, ES6',
-      offline: 'Offline Series',
-      antiangular: 'Anti-angular',
-      react: 'React',
-      ember: 'Ember',
-      animations: 'JavaScript Animations',
-      drawing: 'Drawing in JS',
-      games: 'Game Development',
-    };
 
     return (
       <BaseLayout module="home" rehydration={this.props}>
         <Header color="#0069c4" title="Vote for 2015 Topics" />
         <Paper depth={depth} rounded={rounded} style={{padding: '16px'}}>
-          <form>
-            {Object.keys(topics).map(k => (
-              <Checkbox key={k} checked={this.state['topic[]'].indexOf(k) > -1} name="topic[]" onChange={this.onChange} value={k}>
-                {topics[k]}
-              </Checkbox>
-            ))}
-            <Checkbox checked={this.state['topic[]'].indexOf('other') > -1} name="topic[]" onChange={this.onChange} value="other">
-              <Floater name="other" label="Other..." />
-            </Checkbox>
-            <button className={css.button.className} type="submit">submit</button>
-          </form>
+          {this.renderForm()}
         </Paper>
       </BaseLayout>
     );

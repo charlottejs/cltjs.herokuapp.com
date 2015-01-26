@@ -30,6 +30,7 @@
     "hapi-level": "^1.0.4",
     "hapi-mailer": "^2.0.0",
     "hapi-react-views": "^1.2.3",
+    "isomorphic-fetch": "^1.6.1",
     "joi": "^5.1.0",
     "jsx-loader": "^0.12.2",
     "rcss": "git://github.com/chenglou/RCSS.git#37f84f384a089a60c1e253b961045367caa1a963",
