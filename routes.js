@@ -36,7 +36,7 @@ module.exports = function(server) {
 
   server.route({
     method: 'GET',
-    path: '/2015-topics',
+    path: '/2015-votes',
     handler: function(request, reply) {
       Votes.totals(db(request), function(response) {
         reply(response).code(200);
@@ -44,6 +44,15 @@ module.exports = function(server) {
     }
   });
 
+  server.route({
+    method: 'GET',
+    path: '/2015-votes/names',
+    handler: function(request, reply) {
+      Votes.totalsGroupedByName(db(request), function(response) {
+        reply(response).code(200);
+      });
+    }
+  });
 
   server.route({
     method: 'POST',

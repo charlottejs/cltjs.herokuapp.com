@@ -34,5 +34,22 @@ module.exports = {
       invoke(callback, counts);
     });
   },
+
+  totalsGroupedByName: function(plugin, callback) {
+    var db = plugin.db;
+    var votes = db.collection('votes');
+
+    votes.find({}).toArray(function(err, result) {
+      if (err) return reply(Boom.internal('Internal MongoDB error', err));
+      var counts = result.reduce(function(memo, c) {
+        memo[c.name] = c.topic;
+        if (c.other) c.topic.push(c.other);
+
+        return memo;
+      }, {});
+
+      invoke(callback, counts);
+    });
+  },
 };
 
