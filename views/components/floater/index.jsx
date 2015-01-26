@@ -46,7 +46,7 @@ var Floater = React.createClass({
   },
 
   render() {
-    var {children, id, name, ...rest} = this.props;
+    var {children, id, name, hidden, ...rest} = this.props;
     if (typeof id === 'undefined') {
       if (typeof name === 'string') id = name.replace(/\s+/, '-');
       else id = children.replace(/\s+/, '-').toLowerCase();
@@ -54,7 +54,7 @@ var Floater = React.createClass({
     var {value} = this.state;
 
     return (
-      <div className={css.fieldset.className}>
+      <div className={css.fieldset.className} hidden={hidden}>
         <label
           className={css[getLabelSelector(value)].className}
           htmlFor={id}>{children}</label>

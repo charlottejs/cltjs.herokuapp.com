@@ -39,17 +39,26 @@ var Home = React.createClass({
     return props;
   },
 
-  getInitialState() {
-    var s = {};
+  componentDidMount() {
     if (typeof localStorage !== 'undefined' && localStorage.getItem('2015-votes')) {
-      s = JSON.parse(localStorage.getItem('2015-votes'));
+      var s = JSON.parse(localStorage.getItem('2015-votes'));
+      if (s.name) var hideName = true;
+      this.setState({
+        hideName: hideName,
+        name: s.name,
+        'topic[]': s.topic,
+        other: s.other,
+      });
     }
+  },
+
+  getInitialState() {
     return {
       depth: 2,
       rounded: false,
-      'name': s.name || '',
-      'topic[]': s.topic || ['clojurescript'],
-      'other': s.other || '',
+      'name': '',
+      'topic[]': [],
+      'other': '',
       // extract from rehydration
       message: this.props.message,
       errors: [],
@@ -118,7 +127,7 @@ var Home = React.createClass({
             {this.state.errors.map(e => <div key={e} className={css.error.className}>{e}</div>)}
           </ul>
         )}
-        <Floater name="name" onChange={this.onChange}>Full name</Floater>
+        <Floater name="name" onChange={this.onChange} hidden={this.state.hideName}>Full name</Floater>
         <fieldset className={css.fieldset.className}>
           <p>Please select the topics you are most interested in.</p>
           {Object.keys(TOPICS).map(k => (
