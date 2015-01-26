@@ -1,0 +1,10 @@
+#! /bin/bash
+
+echo "Installing npm dependencies"
+npm install
+
+echo "Yup. That was it."
+echo "Now get hacking!"
+echo "  `nodemon`: watch and reload server assets"
+echo "  `webpack`: watch and recompile client assets"
+
