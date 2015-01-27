@@ -2,7 +2,6 @@ var React = require('react');
 var css = require('./styles');
 
 var _css = (depth, rounded, circle, bottom) => (
-  css.BASE.className + ' ' +
   (bottom ?
     css[`depthBottom${depth}`].className :
     css[`depth${depth}`].className)
@@ -25,7 +24,7 @@ var Paper = React.createClass({
     // TODO: invariant for range
 
     return (
-      <div className={_css(depth, rounded, circle)}>
+      <div className={css.BASE.className + ' ' + _css(depth, rounded, circle)}>
         <div {...props} className={_css(depth, rounded, circle, 'Bottom')}>
           {children}
         </div>
